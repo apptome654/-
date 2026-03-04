@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Приглашение на 8 Марта</title>
+    <style>
+      :root {
+        --bg: #fff4fb;
+        --card: #ffffff;
+        --accent: #d946a1;
+        --accent-dark: #b73084;
+        --text: #3e1d33;
+        --muted: #7f5971;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: radial-gradient(circle at top, #ffe7f6, var(--bg));
+        color: var(--text);
+        display: grid;
+        place-items: center;
+        padding: 20px;
+      }
+
+      .card {
+        width: min(680px, 100%);
+        background: var(--card);
+        border-radius: 24px;
+        padding: 30px;
+        box-shadow: 0 18px 40px rgba(172, 35, 117, 0.18);
+      }
+
+      h1 {
+        margin: 0 0 12px;
+        font-size: clamp(1.8rem, 4vw, 2.4rem);
+      }
+
+      .subtitle {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.5;
+      }
+
+      .question {
+        margin: 28px 0 16px;
+        font-size: 1.25rem;
+        font-weight: 600;
+      }
+
+      .options {
+        display: grid;
+        gap: 12px;
+      }
+
+      .arrival-time {
+        margin-top: 14px;
+        padding: 12px;
+        border: 2px dashed #f3c4e4;
+        border-radius: 14px;
+        display: none;
+      }
+
+      .arrival-time.show {
+        display: block;
+      }
+
+      .arrival-time p {
+        margin: 0 0 10px;
+        color: var(--muted);
+        font-weight: 600;
+      }
+
+      label {
+        border: 2px solid #f3c4e4;
+        border-radius: 14px;
+        padding: 14px 16px;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        cursor: pointer;
+        transition: 0.2s ease;
+      }
+
+      label:hover {
+        border-color: var(--accent);
+        transform: translateY(-1px);
+      }
+
+      input[type="radio"] {
+        accent-color: var(--accent);
+        width: 18px;
+        height: 18px;
+        margin: 0;
+      }
+
+      .quick-yes {
+        margin-top: 14px;
+        width: 100%;
+        border: 2px solid var(--accent);
+        border-radius: 14px;
+        padding: 12px;
+        background: #fff;
+        color: var(--accent-dark);
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      button {
+        margin-top: 18px;
+        width: 100%;
+        border: none;
+        border-radius: 14px;
+        padding: 14px;
+        background: var(--accent);
+        color: #fff;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+
+      button:hover {
+        background: var(--accent-dark);
+      }
+
+      .result {
+        margin-top: 18px;
+        padding: 14px;
+        border-radius: 12px;
+        display: none;
+        font-weight: 600;
+      }
+
+      .result.show {
+        display: block;
+      }
+
+      .result.yes {
+        background: #fce8f5;
+        color: #8f1c66;
+      }
+
+      .result.no {
+        background: #f4f0f8;
+        color: #6a4a7d;
+      }
+
+      footer {
+        margin-top: 20px;
+        color: var(--muted);
+        font-size: 0.92rem;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="card">
+      <h1>🌷 Приглашение на 8 Марта</h1>
+      <p class="subtitle">
+        Дорогие друзья! Приглашаем вас на праздничный вечер в честь Международного
+        женского дня. Будет уютно, вкусно и красиво ✨
+      </p>
+
+      <p class="question">Вы придёте на праздник?</p>
+
+      <form id="invite-form">
+        <div class="options">
+          <label>
+            <input type="radio" name="attendance" value="yes" />
+            Да, обязательно приду!
+          </label>
+          <label>
+            <input type="radio" name="attendance" value="no" />
+            К сожалению, не смогу прийти
+          </label>
+        </div>
+
+        <button id="quick-yes" class="quick-yes" type="button">Да</button>
+
+        <div id="arrival-time" class="arrival-time">
+          <p>Во сколько вы придёте?</p>
+          <div class="options">
+            <label>
+              <input type="radio" name="arrival" value="17:00" />
+              17:00
+            </label>
+            <label>
+              <input type="radio" name="arrival" value="17:10" />
+              17:10
+            </label>
+            <label>
+              <input type="radio" name="arrival" value="16:50" />
+              16:50
+            </label>
+            <label>
+              <input type="radio" name="arrival" value="16:40" />
+              16:40
+            </label>
+          </div>
+        </div>
+
+        <button type="submit">Отправить ответ</button>
+      </form>
+
+      <div id="result" class="result" role="status" aria-live="polite"></div>
+
+      <footer>📅 6 марта • 🕔 17:24 • 📍 Четвертая 62</footer>
+    </main>
+
+    <script>
+      const form = document.getElementById('invite-form');
+      const result = document.getElementById('result');
+      const arrivalTimeBox = document.getElementById('arrival-time');
+      const attendanceRadios = document.querySelectorAll('input[name="attendance"]');
+      const quickYesButton = document.getElementById('quick-yes');
+
+      const toggleArrivalTime = () => {
+        const choice = new FormData(form).get('attendance');
+        const arrivalInputs = form.querySelectorAll('input[name="arrival"]');
+
+        if (choice === 'yes') {
+          arrivalTimeBox.classList.add('show');
+          result.className = 'result';
+          result.textContent = '';
+        } else {
+          arrivalTimeBox.classList.remove('show');
+          arrivalInputs.forEach((input) => {
+            input.checked = false;
+          });
+
+          if (choice === 'no') {
+            result.className = 'result show no';
+            result.textContent =
+              'Желаем вам счастья! Нам будет вас не хватать, и вы остались без вкусной еды от Ерсін 😊';
+          }
+        }
+      };
+
+      attendanceRadios.forEach((radio) => {
+        radio.addEventListener('change', toggleArrivalTime);
+      });
+
+      quickYesButton.addEventListener('click', () => {
+        const yesRadio = form.querySelector('input[name="attendance"][value="yes"]');
+        yesRadio.checked = true;
+        toggleArrivalTime();
+        arrivalTimeBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
+
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+
+        const choice = new FormData(form).get('attendance');
+
+        if (!choice) {
+          result.className = 'result show no';
+          result.textContent = 'Пожалуйста, выберите вариант: придёте или нет.';
+          return;
+        }
+
+        if (choice === 'yes') {
+          const arrival = new FormData(form).get('arrival');
+
+          if (!arrival) {
+            result.className = 'result show no';
+            result.textContent = 'Выберите время прихода: 17:00, 17:10, 16:50 или 16:40.';
+            return;
+          }
+
+          result.className = 'result show yes';
+          result.textContent = `Ждём вас всех! Будем рады видеть вас в ${arrival} 💐`;
+        } else {
+          result.className = 'result show no';
+          result.textContent =
+            'Желаем вам счастья! Нам будет вас не хватать, и вы остались без вкусной еды от Ерсін 😊';
+        }
+      });
+    </script>
+  </body>
+</html>
